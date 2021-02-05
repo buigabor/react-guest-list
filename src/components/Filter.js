@@ -1,50 +1,68 @@
-import React from 'react';
+import FormControl from '@material-ui/core/FormControl';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import { React, useRef, useState } from 'react';
 
-export default function Filter({
-	setAllGuests,
-	allGuests,
-	filteredGuests,
-	setFilteredGuests,
-}) {
-	function handleFilter(e, attending) {
-		const checked = e.target.checked;
-		if (checked) {
+export default function Filter({ allGuests, setFilteredGuests }) {
+	const [attendingChecked, setAttendingChecked] = useState();
+	const [nonAttendingChecked, setNonAttendingChecked] = useState();
+	const inputAttending = useRef();
+	const inputNonAttending = useRef();
+
+	function handleFilter(attendance) {
+		if (attendance === 'attending') {
 			const filteredGuests = allGuests.filter((guest) => {
-				return guest.attending === attending;
+				return guest.attending === true;
 			});
-			console.log(filteredGuests);
 			return setFilteredGuests(filteredGuests);
 		}
-		setFilteredGuests(allGuests);
+		const filteredGuests = allGuests.filter((guest) => {
+			return guest.attending === false;
+		});
+		setFilteredGuests(filteredGuests);
 	}
 
 	function handleResetFilter() {
-		const inputAttending = document.getElementById('attending');
-		const inputNonAttending = document.getElementById('non-attending');
-		inputAttending.checked = false;
-		inputNonAttending.checked = false;
+		setAttendingChecked(false);
+		setNonAttendingChecked(false);
 		setFilteredGuests(allGuests);
 	}
 	return (
 		<div>
-			<label htmlFor='attending'>Attending</label>
-			<input
-				type='radio'
-				name='attendance'
-				id='attending'
-				onChange={(e) => {
-					handleFilter(e, true);
-				}}
-			/>
-			<label htmlFor='non-attending'>Non-Attending</label>
-			<input
-				type='radio'
-				name='attendance'
-				id='non-attending'
-				onChange={(e) => {
-					handleFilter(e, false);
-				}}
-			/>
+			<FormControl component='fieldset'>
+				<RadioGroup
+					row
+					aria-label='gender'
+					name='gender1'
+					onChange={(e) => {
+						handleFilter(e.target.value);
+					}}
+				>
+					<FormControlLabel
+						checked={attendingChecked}
+						inputRef={inputAttending}
+						value='attending'
+						control={<Radio />}
+						label='Attending'
+						onChange={(e) => {
+							setAttendingChecked(e.target.checked);
+							setNonAttendingChecked(!e.target.checked);
+						}}
+					/>
+					<FormControlLabel
+						checked={nonAttendingChecked}
+						inputRef={inputNonAttending}
+						value='non-attending'
+						control={<Radio />}
+						label='Non-Attending'
+						onChange={(e) => {
+							setAttendingChecked(!e.target.checked);
+							setNonAttendingChecked(e.target.checked);
+						}}
+					/>
+				</RadioGroup>
+			</FormControl>
 			<button
 				onClick={() => {
 					handleResetFilter();

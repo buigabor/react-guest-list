@@ -1,4 +1,5 @@
 /** @jsxImportSource @emotion/react */
+import Checkbox from '@material-ui/core/Checkbox';
 import { React, useState } from 'react';
 import { fieldStyles } from './fieldStyles';
 
@@ -35,7 +36,6 @@ export default function Field({
 
 	if (addDeadline) {
 		const nonAttendingGuests = getNonAttGuestsIfDeadline();
-		console.log(nonAttendingGuests);
 		if (nonAttendingGuests) {
 			let nonAttendingDiv;
 			for (let i = 0; i < nonAttendingGuests.length; i++) {
@@ -52,15 +52,7 @@ export default function Field({
 			{activeFirstName ? (
 				<div className='names__wrapper' id={guest.id}>
 					<input
-						id={guest.id}
-						type='checkbox'
-						name={guest.id}
-						checked={guest.attending}
-						onChange={(e) => {
-							updateGuest(guest.id, !!e.target.checked);
-						}}
-					/>
-					<input
+						className='first-name'
 						value={firstName}
 						type='text'
 						onKeyDown={(e) => {
@@ -73,28 +65,29 @@ export default function Field({
 						onBlur={() => {
 							setActiveFirstName(false);
 						}}
-						autoFocus
 					/>
 					<div>{lastName}</div>
-					<button
-						onClick={() => {
-							deleteGuest(guest.id);
-						}}
-					>
-						x
-					</button>
-				</div>
-			) : activeLastName ? (
-				<div className='names__wrapper' id={guest.id}>
-					<input
-						id={guest.id}
+					<Checkbox
+						inputProps={{ 'aria-label': 'primary checkbox' }}
+						id={guest.id + '-checkbox'}
 						type='checkbox'
-						name={guest.id}
+						name={guest.id + '-checkbox'}
 						checked={guest.attending}
 						onChange={(e) => {
 							updateGuest(guest.id, !!e.target.checked);
 						}}
 					/>
+					<button
+						className='delete-button'
+						onClick={() => {
+							deleteGuest(guest.id);
+						}}
+					>
+						<i className='fas fa-trash'></i>
+					</button>
+				</div>
+			) : activeLastName ? (
+				<div className='names__wrapper' id={guest.id}>
 					<div className='names__first-name'>{firstName}</div>
 					<input
 						value={lastName}
@@ -109,19 +102,9 @@ export default function Field({
 						onBlur={() => {
 							setActiveLastName(false);
 						}}
-						autoFocus
 					/>
-					<button
-						onClick={() => {
-							deleteGuest(guest.id);
-						}}
-					>
-						x
-					</button>
-				</div>
-			) : (
-				<div className='names__wrapper' id={guest.id}>
-					<input
+					<Checkbox
+						inputProps={{ 'aria-label': 'primary checkbox' }}
 						id={guest.id}
 						type='checkbox'
 						name={guest.id}
@@ -130,6 +113,17 @@ export default function Field({
 							updateGuest(guest.id, !!e.target.checked);
 						}}
 					/>
+					<button
+						className='delete-button'
+						onClick={() => {
+							deleteGuest(guest.id);
+						}}
+					>
+						<i className='fas fa-trash'></i>
+					</button>
+				</div>
+			) : (
+				<div className='names__wrapper' id={guest.id}>
 					<div
 						onDoubleClick={() => {
 							setActiveFirstName(true);
@@ -145,12 +139,23 @@ export default function Field({
 					>
 						{lastName}
 					</div>
+					<Checkbox
+						inputProps={{ 'aria-label': 'primary checkbox' }}
+						id={guest.id}
+						type='checkbox'
+						name={guest.id}
+						checked={guest.attending}
+						onChange={(e) => {
+							updateGuest(guest.id, !!e.target.checked);
+						}}
+					/>
 					<button
+						className='delete-button'
 						onClick={() => {
 							deleteGuest(guest.id);
 						}}
 					>
-						x
+						<i className='fas fa-trash'></i>
 					</button>
 				</div>
 			)}
