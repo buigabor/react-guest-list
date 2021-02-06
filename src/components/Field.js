@@ -39,7 +39,7 @@ export default function Field({
 		if (nonAttendingGuests) {
 			let nonAttendingDiv;
 			for (let i = 0; i < nonAttendingGuests.length; i++) {
-				let guestId = nonAttendingGuests[i].id;
+				const guestId = nonAttendingGuests[i].id;
 				nonAttendingDiv = document.getElementById(guestId);
 				nonAttendingDiv.classList.add('non-attending');
 			}
@@ -83,7 +83,7 @@ export default function Field({
 							deleteGuest(guest.id);
 						}}
 					>
-						<i className='fas fa-trash'></i>
+						<i className='fas fa-trash' />
 					</button>
 				</div>
 			) : activeLastName ? (
@@ -119,7 +119,7 @@ export default function Field({
 							deleteGuest(guest.id);
 						}}
 					>
-						<i className='fas fa-trash'></i>
+						<i className='fas fa-trash' />
 					</button>
 				</div>
 			) : (
@@ -155,7 +155,7 @@ export default function Field({
 							deleteGuest(guest.id);
 						}}
 					>
-						<i className='fas fa-trash'></i>
+						<i className='fas fa-trash' />
 					</button>
 				</div>
 			)}

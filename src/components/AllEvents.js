@@ -15,5 +15,5 @@ export default function AllEvents({ allEvents }) {
 			</div>
 		);
 	}
-	return <div></div>;
+	return <div />;
 }

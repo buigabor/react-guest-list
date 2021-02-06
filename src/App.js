@@ -43,17 +43,15 @@ function App() {
 
 	async function fetchAllEvents() {
 		const response = await fetch(`${baseUrl}/event`);
-		const allEvents = await response.json();
-		console.log(allEvents);
-		setAllEvents(allEvents);
+		const allEventsFetched = await response.json();
+		setAllEvents(allEventsFetched);
 	}
 
 	async function fetchAllGuests() {
 		const response = await fetch(`${baseUrl}/`);
-		const allGuests = await response.json();
-		setAllGuests(allGuests);
-		console.log(allGuests);
-		setFilteredGuests(allGuests);
+		const allGuestsFetched = await response.json();
+		setAllGuests(allGuestsFetched);
+		setFilteredGuests(allGuestsFetched);
 	}
 
 	useEffect(() => {

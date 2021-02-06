@@ -4,7 +4,6 @@ import Field from './Field';
 import { guestListStyles } from './guestListStyles';
 
 export default function GuestList({
-	allGuests,
 	deleteGuest,
 	updateGuest,
 	filteredGuests,
@@ -14,14 +13,13 @@ export default function GuestList({
 	getNonAttGuestsIfDeadline,
 	addDeadline,
 }) {
-	// custom hook to get previous value
-
 	if (filteredGuests) {
 		return (
 			<div css={guestListStyles}>
 				{filteredGuests.map((guest) => {
 					return (
 						<Field
+							key={guest.id}
 							updateGuestName={updateGuestName}
 							firstNameInputActive={firstNameInputActive}
 							setFirstNameInputActive={setFirstNameInputActive}
@@ -32,35 +30,10 @@ export default function GuestList({
 							addDeadline={addDeadline}
 						/>
 					);
-					// return (
-					// 	<>
-					// 		<div key={guest.id} className='wrapper'>
-					// 			<input
-					// 				id={guest.id}
-					// 				type='checkbox'
-					// 				name={guest.id}
-					// 				checked={guest.attending}
-					// 				onChange={(e) => {
-					// 					updateGuest(guest.id, !!e.target.checked);
-					// 				}}
-					// 			/>
-					// 			<label htmlFor={guest.id}>
-					// 				{guest.firstName} {guest.lastName}
-					// 			</label>
-					// 			<button
-					// 				onClick={() => {
-					// 					deleteGuest(guest.id);
-					// 				}}
-					// 			>
-					// 				x
-					// 			</button>
-					// 		</div>
-					// 	</Field>
-					// );
 				})}
 			</div>
 		);
 	} else {
-		return <></>;
+		return <div />;
 	}
 }
