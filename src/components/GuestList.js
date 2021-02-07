@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { React } from 'react';
+import { guestListStyles } from '../styles/guestListStyles';
 import Field from './Field';
-import { guestListStyles } from './guestListStyles';
 
 export default function GuestList({
 	deleteGuest,
@@ -15,7 +15,7 @@ export default function GuestList({
 }) {
 	if (filteredGuests) {
 		return (
-			<div css={guestListStyles}>
+			<div className='field-wrapper' css={guestListStyles}>
 				{filteredGuests.map((guest) => {
 					return (
 						<Field

@@ -1,12 +1,17 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
+import Button from '@material-ui/core/Button';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import { useEffect, useState } from 'react';
 import './App.css';
+import AllEvents from './components/AllEvents';
 import Calendar from './components/Calendar';
-import DeleteAllButton from './components/DeleteAllButton';
+import CreateGuestForm from './components/CreateGuestForm';
 import Event from './components/Event';
 import Filter from './components/Filter';
 import GuestList from './components/GuestList';
+
 const baseUrl = 'http://localhost:5000';
 
 const guessListWrapperStyles = css`
@@ -14,10 +19,29 @@ const guessListWrapperStyles = css`
 	margin: 0 1rem;
 	padding: 0 1rem;
 	overflow-y: auto;
+	border-right: 1px solid #b8b8b8;
+	.guestlist-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	.field-wrapper {
+		min-width: 270px;
+	}
+	.footer-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 `;
 
 const actionsStyles = css`
+	position: relative;
 	grid-area: action;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 30px;
 `;
 
 const appStyles = css`
@@ -25,11 +49,11 @@ const appStyles = css`
 	grid-template-columns: 1fr 1fr;
 	grid-template-rows: 1fr;
 	grid-template-areas: 'list action';
-	margin: 2rem;
+	margin: 8rem 2rem;
 	border-radius: 15px;
 	background: #fff;
-	min-width: 80vw;
-	min-height: 80vh;
+
+	height: 90vh;
 	box-shadow: 0 0 0 1px rgb(16 22 26 / 10%), 0 4px 8px rgb(16 22 26 / 20%),
 		0 18px 46px 6px rgb(16 22 26 / 20%);
 `;
@@ -40,6 +64,9 @@ function App() {
 	const [filteredGuests, setFilteredGuests] = useState();
 	const [deadline, setDeadline] = useState(new Date());
 	const [addDeadline, setAddDeadLine] = useState(false);
+	const [view, setView] = useState('');
+	console.log(view);
+	const [anchorEl, setAnchorEl] = useState(null);
 
 	async function fetchAllEvents() {
 		const response = await fetch(`${baseUrl}/event`);
@@ -129,48 +156,88 @@ function App() {
 		return updatedGuest;
 	}
 
+	const handleClick = (event) => {
+		setAnchorEl(event.currentTarget);
+		console.log(event.currentTarget);
+	};
+
 	return (
 		<div css={appStyles}>
-			<div css={guessListWrapperStyles}>
-				<Filter
-					allGuests={allGuests}
-					setAllGuests={setAllGuests}
-					filteredGuests={filteredGuests}
-					setFilteredGuests={setFilteredGuests}
-				/>
-				<GuestList
-					filteredGuests={filteredGuests}
-					allGuests={allGuests}
-					updateGuest={updateGuest}
-					deleteGuest={deleteGuest}
-					updateGuestName={updateGuestName}
-					getNonAttGuestsIfDeadline={getNonAttGuestsIfDeadline}
-					addDeadline={addDeadline}
-				/>
-
-				<DeleteAllButton allGuests={allGuests} deleteGuest={deleteGuest} />
-			</div>
-			<div css={actionsStyles}>
-				<form
-					onSubmit={(e) => {
-						e.preventDefault();
-						const firstName = document.getElementById('first-name').value;
-						const lastName = document.getElementById('last-name').value;
-						createGuest(firstName, lastName);
+			<div>
+				<Button
+					aria-controls='simple-menu'
+					aria-haspopup='true'
+					onClick={handleClick}
+				>
+					Open Menu
+				</Button>
+				<Menu
+					id='simple-menu'
+					anchorEl={anchorEl}
+					keepMounted
+					open={Boolean(anchorEl)}
+					onClose={() => {
+						setAnchorEl(null);
 					}}
 				>
-					<label htmlFor='first-name'>First Name:</label>
-					<input type='text' name='first-name' id='first-name' />
-					<label htmlFor='last-name'>Last Name:</label>
-					<input type='text' name='last-name' id='last-name' />
-					<button>Create Guest</button>
-				</form>
+					<MenuItem
+						onClick={() => {
+							setView('guest-list');
+							setAnchorEl(null);
+						}}
+					>
+						Guess List
+					</MenuItem>
+					<MenuItem
+						onClick={() => {
+							setView('event-list');
+							setAnchorEl(null);
+						}}
+					>
+						Event List
+					</MenuItem>
+				</Menu>
+			</div>
+			<div css={guessListWrapperStyles}>
+				{view === 'guest-list' ? (
+					<>
+						<div className='guestlist-wrapper'>
+							<Filter
+								allGuests={allGuests}
+								setAllGuests={setAllGuests}
+								filteredGuests={filteredGuests}
+								setFilteredGuests={setFilteredGuests}
+								deleteGuest={deleteGuest}
+							/>
+							<GuestList
+								filteredGuests={filteredGuests}
+								allGuests={allGuests}
+								updateGuest={updateGuest}
+								deleteGuest={deleteGuest}
+								updateGuestName={updateGuestName}
+								getNonAttGuestsIfDeadline={getNonAttGuestsIfDeadline}
+								addDeadline={addDeadline}
+							/>
+						</div>
+						<div className='footer-wrapper'>
+							<Calendar
+								deadline={deadline}
+								setDeadline={setDeadline}
+								setAddDeadLine={setAddDeadLine}
+							/>
+						</div>
+					</>
+				) : view === 'event-list' ? (
+					<div className='guestlist-wrapper'>
+						<AllEvents allEvents={allEvents} />
+					</div>
+				) : (
+					<div>Please select a view!</div>
+				)}
+			</div>
+			<div css={actionsStyles}>
+				<CreateGuestForm createGuest={createGuest} />
 				<Event createEvent={createEvent} allEvents={allEvents} />
-				<Calendar
-					deadline={deadline}
-					setDeadline={setDeadline}
-					setAddDeadLine={setAddDeadLine}
-				/>
 			</div>
 		</div>
 	);

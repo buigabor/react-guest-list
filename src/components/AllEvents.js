@@ -1,4 +1,7 @@
+/** @jsxImportSource @emotion/react */
+
 import React from 'react';
+import { eventFieldStyles } from '../styles/eventStyles';
 
 export default function AllEvents({ allEvents }) {
 	if (allEvents) {
@@ -6,9 +9,9 @@ export default function AllEvents({ allEvents }) {
 			<div>
 				{allEvents.map((event) => {
 					return (
-						<div key={event.eventId}>
-							<div>{event.eventName}</div>
-							<div>{event.eventLocation}</div>
+						<div css={eventFieldStyles} key={event.eventId}>
+							<div>Event Name: {event.eventName}</div>
+							<div>Event Location: {event.eventLocation}</div>
 						</div>
 					);
 				})}

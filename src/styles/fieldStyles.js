@@ -1,7 +1,5 @@
 import { css } from '@emotion/react';
 
-const checkboxStyle = css``;
-
 export const fieldStyles = css`
 	max-width: 300px;
 	padding: 1rem 1rem;
@@ -11,11 +9,18 @@ export const fieldStyles = css`
 	align-items: center;
 	background: #fff;
 	box-shadow: 0 0 1px rgb(0 0 0 / 13%), 0 1px 3px rgb(0 0 0 / 26%);
+	transition: all 0.2s ease-in-out;
+	&:hover {
+		background: rgba(215, 217, 219, 0.308);
+	}
 
 	.names {
 		&__wrapper {
 			display: flex;
 			align-items: center;
+			input {
+				width: 100%;
+			}
 		}
 
 		&__first-name {
@@ -37,5 +42,19 @@ export const fieldStyles = css`
 		color: #5c7080;
 	}
 
-	${checkboxStyle}
+	.filter-btn {
+		display: inline-flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		border: none;
+		border-radius: 3px;
+		cursor: pointer;
+		padding: 5px 10px;
+		vertical-align: middle;
+		text-align: left;
+		font-size: 14px;
+		min-width: 30px;
+		min-height: 30px;
+	}
 `;
