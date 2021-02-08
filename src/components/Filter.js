@@ -23,6 +23,7 @@ const filterStyles = css`
 		background-color: #fff;
 		border: 1px solid #b8b8b8;
 		transition: all 0.3s;
+		outline: none;
 		&:hover {
 			background: rgba(172, 179, 185, 0.835);
 			text-decoration: none;

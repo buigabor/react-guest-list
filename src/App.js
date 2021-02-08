@@ -17,7 +17,7 @@ const baseUrl = 'http://localhost:5000';
 const guessListWrapperStyles = css`
 	grid-area: list;
 	margin: 0 1rem;
-	padding: 0 1rem;
+	padding: 2.5rem 1rem 0rem 1rem;
 	overflow-y: auto;
 	border-right: 1px solid #b8b8b8;
 	.guestlist-wrapper {
@@ -49,13 +49,27 @@ const appStyles = css`
 	grid-template-columns: 1fr 1fr;
 	grid-template-rows: 1fr;
 	grid-template-areas: 'list action';
-	margin: 8rem 2rem;
+	margin: 2rem 2rem;
 	border-radius: 15px;
 	background: #fff;
 
 	height: 90vh;
 	box-shadow: 0 0 0 1px rgb(16 22 26 / 10%), 0 4px 8px rgb(16 22 26 / 20%),
 		0 18px 46px 6px rgb(16 22 26 / 20%);
+
+	.menu {
+		position: absolute;
+		top: 50px;
+		left: 60px;
+	}
+
+	.preview {
+		font-size: 27px;
+		font-weight: 600;
+		position: relative;
+		top: 120px;
+		left: 150px;
+	}
 `;
 
 function App() {
@@ -63,9 +77,8 @@ function App() {
 	const [allEvents, setAllEvents] = useState();
 	const [filteredGuests, setFilteredGuests] = useState();
 	const [deadline, setDeadline] = useState(new Date());
-	const [addDeadline, setAddDeadLine] = useState(false);
+	const [addDeadline, setAddDeadLine] = useState('');
 	const [view, setView] = useState('');
-	console.log(view);
 	const [anchorEl, setAnchorEl] = useState(null);
 
 	async function fetchAllEvents() {
@@ -158,18 +171,35 @@ function App() {
 
 	const handleClick = (event) => {
 		setAnchorEl(event.currentTarget);
-		console.log(event.currentTarget);
 	};
+
+	if (addDeadline === 'add') {
+		const nonAttendingGuests = getNonAttGuestsIfDeadline();
+		if (nonAttendingGuests) {
+			let nonAttendingDiv;
+			for (let i = 0; i < nonAttendingGuests.length; i++) {
+				const guestId = nonAttendingGuests[i].id;
+				nonAttendingDiv = document.getElementById(guestId);
+				nonAttendingDiv.classList.add('non-attending');
+			}
+		}
+	} else if (addDeadline === 'clear') {
+		for (let i = 0; i < filteredGuests.length; i++) {
+			const guestId = filteredGuests[i].id;
+			const filteredGuestsDivs = document.getElementById(guestId);
+			filteredGuestsDivs.classList.remove('non-attending');
+		}
+	}
 
 	return (
 		<div css={appStyles}>
-			<div>
+			<div className='menu'>
 				<Button
 					aria-controls='simple-menu'
 					aria-haspopup='true'
 					onClick={handleClick}
 				>
-					Open Menu
+					Select List
 				</Button>
 				<Menu
 					id='simple-menu'
@@ -232,7 +262,7 @@ function App() {
 						<AllEvents allEvents={allEvents} />
 					</div>
 				) : (
-					<div>Please select a view!</div>
+					<div className='preview'>Please select a list!</div>
 				)}
 			</div>
 			<div css={actionsStyles}>

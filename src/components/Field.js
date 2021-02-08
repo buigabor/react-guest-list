@@ -44,18 +44,6 @@ export default function Field({
 		}
 	};
 
-	if (addDeadline) {
-		const nonAttendingGuests = getNonAttGuestsIfDeadline();
-		if (nonAttendingGuests) {
-			let nonAttendingDiv;
-			for (let i = 0; i < nonAttendingGuests.length; i++) {
-				const guestId = nonAttendingGuests[i].id;
-				nonAttendingDiv = document.getElementById(guestId);
-				nonAttendingDiv.classList.add('non-attending');
-			}
-		}
-	}
-
 	return (
 		<div css={fieldStyles}>
 			<div className='names__wrapper' id={guest.id}>
