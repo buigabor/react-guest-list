@@ -1,16 +1,26 @@
 /** @jsxImportSource @emotion/react */
 import Checkbox from '@material-ui/core/Checkbox';
-import { React, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Guest } from '../models/interfaces';
 import { fieldStyles } from '../styles/fieldStyles';
+
+type FieldProps = {
+	deleteGuest: (id: number) => Promise<Guest>;
+	updateGuest: (id: number, attending: boolean) => Promise<Guest>;
+	updateGuestName: (
+		firstName: string | undefined,
+		lastName: string | undefined,
+		id: number,
+	) => Promise<Guest>;
+	guest: Guest;
+};
 
 export default function Field({
 	updateGuestName,
 	guest,
 	deleteGuest,
-	getNonAttGuestsIfDeadline,
 	updateGuest,
-	addDeadline,
-}) {
+}: FieldProps) {
 	const [activeFirstName, setActiveFirstName] = useState(false);
 	const [activeLastName, setActiveLastName] = useState(false);
 	const [firstName, setFirstName] = useState(guest.firstName);
@@ -26,17 +36,31 @@ export default function Field({
 			document.body.removeEventListener('click', blurInput);
 		};
 	}, [activeLastName, activeFirstName]);
-	const handleKeyPress = (e, mode) => {
+	const handleKeyPress = (
+		e: React.KeyboardEvent<HTMLInputElement>,
+		mode: string,
+	) => {
 		if (e.key === 'Enter' && mode === 'first-name') {
-			updateGuestName(e.target.value, undefined, guest.id);
+			updateGuestName(
+				(e.target as HTMLInputElement).value,
+				undefined,
+				guest.id,
+			);
 			return setActiveFirstName(false);
 		} else if (e.key === 'Enter' && mode === 'last-name') {
-			updateGuestName(undefined, e.target.value, guest.id);
+			updateGuestName(
+				undefined,
+				(e.target as HTMLInputElement).value,
+				guest.id,
+			);
 			return setActiveLastName(false);
 		}
 	};
 
-	const handleOnChange = (e, mode) => {
+	const handleOnChange = (
+		e: React.ChangeEvent<HTMLInputElement>,
+		mode: string,
+	) => {
 		if (mode === 'first-name') {
 			setFirstName(e.target.value);
 		} else {
@@ -46,11 +70,10 @@ export default function Field({
 
 	return (
 		<div css={fieldStyles}>
-			<div className='names__wrapper' id={guest.id}>
+			<div className='names__wrapper' id={String(guest.id)}>
 				{activeFirstName ? (
 					<>
 						<input
-							size=''
 							className='first-name'
 							value={firstName}
 							type='text'
@@ -60,7 +83,6 @@ export default function Field({
 							onChange={(e) => {
 								handleOnChange(e, 'first-name');
 							}}
-							id={guest.id}
 							onBlur={() => {
 								setActiveFirstName(false);
 							}}
@@ -71,7 +93,6 @@ export default function Field({
 					<>
 						<div className='names__first-name'>{firstName}</div>
 						<input
-							size=''
 							value={lastName}
 							type='text'
 							onKeyDown={(e) => {
@@ -80,7 +101,6 @@ export default function Field({
 							onChange={(e) => {
 								handleOnChange(e, 'last-name');
 							}}
-							id={guest.id}
 							onBlur={() => {
 								setActiveLastName(false);
 							}}
@@ -107,9 +127,6 @@ export default function Field({
 				)}
 				<Checkbox
 					inputProps={{ 'aria-label': 'primary checkbox' }}
-					id={guest.id}
-					type='checkbox'
-					name={guest.id}
 					checked={guest.attending}
 					onChange={(e) => {
 						updateGuest(guest.id, !!e.target.checked);

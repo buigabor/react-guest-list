@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import React from 'react';
+import { Guest } from '../models/interfaces';
 
 const deleteAllButtonStyle = css`
 	border: 1px solid #f5534f;
@@ -21,9 +21,17 @@ const deleteAllButtonStyle = css`
 	}
 `;
 
-export default function DeleteAllButton({ allGuests, deleteGuest }) {
+type DeleteAllProps = {
+	allGuests: Guest[] | [];
+	deleteGuest: (id: number) => Promise<Guest>;
+};
+
+export default function DeleteAllButton({
+	allGuests,
+	deleteGuest,
+}: DeleteAllProps) {
 	function handleDeleteAll() {
-		allGuests.forEach((guest) => {
+		allGuests.forEach((guest: Guest) => {
 			deleteGuest(guest.id);
 		});
 	}

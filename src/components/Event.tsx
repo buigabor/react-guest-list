@@ -2,8 +2,14 @@
 
 import TextField from '@material-ui/core/TextField';
 import React from 'react';
+import { IEvent } from '../models/interfaces';
 import { createFormStyles } from '../styles/createFormStyles';
-export default function Event({ createEvent, allEvents }) {
+
+type EventProps = {
+	createEvent: (eventName: string, eventLocation: string) => Promise<IEvent>;
+};
+
+export default function Event({ createEvent }: EventProps) {
 	return (
 		<div css={createFormStyles}>
 			<div className='header-text'>New Event</div>
@@ -11,8 +17,12 @@ export default function Event({ createEvent, allEvents }) {
 				className='create-event-form'
 				onSubmit={(e) => {
 					e.preventDefault();
-					const eventName = document.getElementById('event-name').value;
-					const locationName = document.getElementById('location-name').value;
+					const eventName = (document.getElementById(
+						'event-name',
+					) as HTMLInputElement).value;
+					const locationName = (document.getElementById(
+						'location-name',
+					) as HTMLInputElement).value;
 					createEvent(eventName, locationName);
 				}}
 			>

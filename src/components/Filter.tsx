@@ -5,7 +5,8 @@ import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
-import { React, useRef, useState } from 'react';
+import React, { SetStateAction, useRef, useState } from 'react';
+import { Guest } from '../models/interfaces';
 import DeleteAllButton from './DeleteAllButton';
 
 const filterStyles = css`
@@ -35,13 +36,25 @@ const filterStyles = css`
 	}
 `;
 
-export default function Filter({ allGuests, setFilteredGuests, deleteGuest }) {
-	const [attendingChecked, setAttendingChecked] = useState();
-	const [nonAttendingChecked, setNonAttendingChecked] = useState();
+type Props = {
+	allGuests: Guest[] | [];
+	setFilteredGuests: React.Dispatch<SetStateAction<[] | Guest[]>>;
+	deleteGuest: (id: number) => Promise<Guest>;
+};
+
+export default function Filter({
+	allGuests,
+	setFilteredGuests,
+	deleteGuest,
+}: Props) {
+	const [attendingChecked, setAttendingChecked] = useState<boolean>(false);
+	const [nonAttendingChecked, setNonAttendingChecked] = useState<boolean>(
+		false,
+	);
 	const inputAttending = useRef();
 	const inputNonAttending = useRef();
 
-	function handleFilter(attendance) {
+	function handleFilter(attendance: string) {
 		if (attendance === 'attending') {
 			const filteredGuests = allGuests.filter((guest) => {
 				return guest.attending === true;
@@ -78,8 +91,8 @@ export default function Filter({ allGuests, setFilteredGuests, deleteGuest }) {
 							control={<Radio />}
 							label='Attending'
 							onChange={(e) => {
-								setAttendingChecked(e.target.checked);
-								setNonAttendingChecked(!e.target.checked);
+								setAttendingChecked((e.target as HTMLInputElement).checked);
+								setNonAttendingChecked(!(e.target as HTMLInputElement).checked);
 							}}
 						/>
 						<FormControlLabel
@@ -89,8 +102,8 @@ export default function Filter({ allGuests, setFilteredGuests, deleteGuest }) {
 							control={<Radio />}
 							label='Non-Attending'
 							onChange={(e) => {
-								setAttendingChecked(!e.target.checked);
-								setNonAttendingChecked(e.target.checked);
+								setAttendingChecked(!(e.target as HTMLInputElement).checked);
+								setNonAttendingChecked((e.target as HTMLInputElement).checked);
 							}}
 						/>
 					</RadioGroup>

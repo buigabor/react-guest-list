@@ -1,5 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -11,75 +10,23 @@ import CreateGuestForm from './components/CreateGuestForm';
 import Event from './components/Event';
 import Filter from './components/Filter';
 import GuestList from './components/GuestList';
+import { Guest, IEvent } from './models/interfaces';
+import {
+	actionsStyles,
+	appStyles,
+	guessListWrapperStyles,
+} from './styles/appStyles';
 
 const baseUrl = 'http://localhost:5000';
 
-const guessListWrapperStyles = css`
-	grid-area: list;
-	margin: 0 1rem;
-	padding: 2.5rem 1rem 0rem 1rem;
-	overflow-y: auto;
-	border-right: 1px solid #b8b8b8;
-	.guestlist-wrapper {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-	}
-	.field-wrapper {
-		min-width: 270px;
-	}
-	.footer-wrapper {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-	}
-`;
-
-const actionsStyles = css`
-	position: relative;
-	grid-area: action;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	margin: 30px;
-`;
-
-const appStyles = css`
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	grid-template-rows: 1fr;
-	grid-template-areas: 'list action';
-	margin: 2rem 2rem;
-	border-radius: 15px;
-	background: #fff;
-
-	height: 90vh;
-	box-shadow: 0 0 0 1px rgb(16 22 26 / 10%), 0 4px 8px rgb(16 22 26 / 20%),
-		0 18px 46px 6px rgb(16 22 26 / 20%);
-
-	.menu {
-		position: absolute;
-		top: 50px;
-		left: 60px;
-	}
-
-	.preview {
-		font-size: 27px;
-		font-weight: 600;
-		position: relative;
-		top: 120px;
-		left: 150px;
-	}
-`;
-
 function App() {
-	const [allGuests, setAllGuests] = useState();
-	const [allEvents, setAllEvents] = useState();
-	const [filteredGuests, setFilteredGuests] = useState();
-	const [deadline, setDeadline] = useState(new Date());
-	const [addDeadline, setAddDeadLine] = useState('');
-	const [view, setView] = useState('');
-	const [anchorEl, setAnchorEl] = useState(null);
+	const [allGuests, setAllGuests] = useState<Guest[] | []>([]);
+	const [allEvents, setAllEvents] = useState<IEvent[] | []>([]);
+	const [filteredGuests, setFilteredGuests] = useState<Guest[] | []>([]);
+	const [deadline, setDeadline] = useState<Date | null>(new Date());
+	const [addDeadline, setAddDeadLine] = useState<string>('');
+	const [view, setView] = useState<string>('');
+	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
 	async function fetchAllEvents() {
 		const response = await fetch(`${baseUrl}/event`);
@@ -99,7 +46,7 @@ function App() {
 		fetchAllEvents();
 	}, []);
 
-	async function createEvent(eventName, eventLocation) {
+	async function createEvent(eventName: string, eventLocation: string) {
 		const response = await fetch(`${baseUrl}/event`, {
 			method: 'POST',
 			headers: {
@@ -113,8 +60,8 @@ function App() {
 	}
 
 	function getNonAttGuestsIfDeadline() {
-		if (deadline.getTime() < new Date().getTime()) {
-			const guestsNonAttending = allGuests.filter((guest) => {
+		if (deadline && deadline.getTime() < new Date().getTime()) {
+			const guestsNonAttending = allGuests.filter((guest: Guest) => {
 				return guest.attending === false;
 			});
 			return guestsNonAttending;
@@ -123,7 +70,7 @@ function App() {
 		}
 	}
 
-	async function createGuest(firstName, lastName) {
+	async function createGuest(firstName: string, lastName: string) {
 		const response = await fetch(`${baseUrl}/`, {
 			method: 'POST',
 			headers: {
@@ -136,14 +83,14 @@ function App() {
 		return createdGuest;
 	}
 
-	async function deleteGuest(id) {
+	async function deleteGuest(id: number) {
 		const response = await fetch(`${baseUrl}/${id}`, { method: 'DELETE' });
 		const deletedGuest = await response.json();
 		await fetchAllGuests();
 		return deletedGuest;
 	}
 
-	async function updateGuest(id, attending) {
+	async function updateGuest(id: number, attending: boolean) {
 		const response = await fetch(`${baseUrl}/${id}`, {
 			method: 'PATCH',
 			headers: {
@@ -156,7 +103,11 @@ function App() {
 		return updatedGuest;
 	}
 
-	async function updateGuestName(firstName, lastName, id) {
+	async function updateGuestName(
+		firstName: string | undefined,
+		lastName: string | undefined,
+		id: number,
+	) {
 		const response = await fetch(`${baseUrl}/${id}`, {
 			method: 'PATCH',
 			headers: {
@@ -169,7 +120,7 @@ function App() {
 		return updatedGuest;
 	}
 
-	const handleClick = (event) => {
+	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorEl(event.currentTarget);
 	};
 
@@ -179,15 +130,15 @@ function App() {
 			let nonAttendingDiv;
 			for (let i = 0; i < nonAttendingGuests.length; i++) {
 				const guestId = nonAttendingGuests[i].id;
-				nonAttendingDiv = document.getElementById(guestId);
-				nonAttendingDiv.classList.add('non-attending');
+				nonAttendingDiv = document.getElementById(String(guestId));
+				nonAttendingDiv!.classList.add('non-attending');
 			}
 		}
 	} else if (addDeadline === 'clear') {
 		for (let i = 0; i < filteredGuests.length; i++) {
 			const guestId = filteredGuests[i].id;
-			const filteredGuestsDivs = document.getElementById(guestId);
-			filteredGuestsDivs.classList.remove('non-attending');
+			const filteredGuestsDivs = document.getElementById(String(guestId));
+			filteredGuestsDivs!.classList.remove('non-attending');
 		}
 	}
 
@@ -234,19 +185,14 @@ function App() {
 						<div className='guestlist-wrapper'>
 							<Filter
 								allGuests={allGuests}
-								setAllGuests={setAllGuests}
-								filteredGuests={filteredGuests}
 								setFilteredGuests={setFilteredGuests}
 								deleteGuest={deleteGuest}
 							/>
 							<GuestList
 								filteredGuests={filteredGuests}
-								allGuests={allGuests}
 								updateGuest={updateGuest}
 								deleteGuest={deleteGuest}
 								updateGuestName={updateGuestName}
-								getNonAttGuestsIfDeadline={getNonAttGuestsIfDeadline}
-								addDeadline={addDeadline}
 							/>
 						</div>
 						<div className='footer-wrapper'>
@@ -267,7 +213,7 @@ function App() {
 			</div>
 			<div css={actionsStyles}>
 				<CreateGuestForm createGuest={createGuest} />
-				<Event createEvent={createEvent} allEvents={allEvents} />
+				<Event createEvent={createEvent} />
 			</div>
 		</div>
 	);
