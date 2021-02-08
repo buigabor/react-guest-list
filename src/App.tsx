@@ -41,11 +41,6 @@ function App() {
 		setFilteredGuests(allGuestsFetched);
 	}
 
-	useEffect(() => {
-		fetchAllGuests();
-		fetchAllEvents();
-	}, []);
-
 	async function createEvent(eventName: string, eventLocation: string) {
 		const response = await fetch(`${baseUrl}/event`, {
 			method: 'POST',
@@ -57,17 +52,6 @@ function App() {
 		const createdEvent = await response.json();
 		await fetchAllEvents();
 		return createdEvent;
-	}
-
-	function getNonAttGuestsIfDeadline() {
-		if (deadline && deadline.getTime() < new Date().getTime()) {
-			const guestsNonAttending = allGuests.filter((guest: Guest) => {
-				return guest.attending === false;
-			});
-			return guestsNonAttending;
-		} else {
-			return null;
-		}
 	}
 
 	async function createGuest(firstName: string, lastName: string) {
@@ -118,6 +102,22 @@ function App() {
 		const updatedGuest = await response.json();
 		await fetchAllGuests();
 		return updatedGuest;
+	}
+
+	useEffect(() => {
+		fetchAllEvents();
+		fetchAllGuests();
+	}, []);
+
+	function getNonAttGuestsIfDeadline() {
+		if (deadline && deadline.getTime() < new Date().getTime()) {
+			const guestsNonAttending = allGuests.filter((guest: Guest) => {
+				return guest.attending === false;
+			});
+			return guestsNonAttending;
+		} else {
+			return null;
+		}
 	}
 
 	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
