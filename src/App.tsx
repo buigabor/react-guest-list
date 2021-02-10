@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import AllEvents from './components/AllEvents';
 import Calendar from './components/Calendar';
@@ -31,16 +31,14 @@ function App() {
     setAllEvents(allEventsFetched);
   }
 
-  async function fetchAllGuests() {
-    console.log(currentEventId);
-
+  const fetchAllGuests = useCallback(async () => {
     const response = await fetch(
       `${baseUrl}/event/${currentEventId}/guest-list`,
     );
     const allGuestsFetched = await response.json();
     setAllGuests(allGuestsFetched);
     setFilteredGuests(allGuestsFetched);
-  }
+  }, [currentEventId]);
 
   useEffect(() => {
     fetchAllEvents();
@@ -50,7 +48,7 @@ function App() {
     if (currentEventId) {
       fetchAllGuests();
     }
-  }, [currentEventId]);
+  }, [currentEventId, fetchAllGuests]);
 
   async function createEvent(eventName: string, eventLocation: string) {
     const response = await fetch(`${baseUrl}/event`, {
