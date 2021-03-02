@@ -14,7 +14,7 @@ import {
   guessListWrapperStyles,
 } from './styles/appStyles';
 
-const baseUrl = 'http://localhost:5000';
+const baseUrl = 'https://express-guest-list-api-memory.herokuapp.com';
 
 function App() {
   const [allGuests, setAllGuests] = useState<Guest[] | []>([]);
